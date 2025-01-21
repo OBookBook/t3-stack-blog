@@ -1,6 +1,33 @@
+"use client";
+
 import Link from "next/link";
+import React, { useRef } from "react";
+import { api } from "~/trpc/react";
+import { useRouter } from "next/navigation";
 
 const PostBlog = () => {
+  const router = useRouter();
+  const titleRef = useRef<HTMLInputElement>(null);
+  const discriptionRef = useRef<HTMLTextAreaElement>(null);
+
+  // [文法] const { mutate: postBlog } = api.post.postBlog.useMutation({
+  const postBlog = api.post.postBlog.useMutation({
+    onSuccess: () => {
+      if (titleRef.current) titleRef.current.value = "";
+      if (discriptionRef.current) discriptionRef.current.value = "";
+      router.push("/");
+      router.refresh();
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    postBlog.mutate({
+      title: titleRef.current?.value ?? "",
+      description: discriptionRef.current?.value ?? "",
+    });
+  };
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
       <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
@@ -8,7 +35,10 @@ const PostBlog = () => {
           <span className="text-[hsl(280,100%,70%)]">T3</span> App Blog
         </h1>
 
-        <form className="w-full max-w-md rounded-lg bg-white p-6 shadow-md">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-md rounded-lg bg-white p-6 shadow-md"
+        >
           <div className="mb-4">
             <label
               className="mb-2 block text-sm font-bold text-gray-800"
@@ -21,6 +51,7 @@ const PostBlog = () => {
               id="title"
               type="text"
               placeholder="タイトルを入力"
+              ref={titleRef}
             />
           </div>
           <div className="mb-6">
@@ -34,6 +65,7 @@ const PostBlog = () => {
               className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
               id="description"
               placeholder="説明を入力"
+              ref={discriptionRef}
             />
           </div>
           <div className="flex items-center justify-between">
