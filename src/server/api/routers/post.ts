@@ -1,5 +1,5 @@
 import { z } from "zod";
-
+import { db } from "~/server/db";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const postRouter = createTRPCRouter({
@@ -28,4 +28,20 @@ export const postRouter = createTRPCRouter({
 
     return post ?? null;
   }),
+
+  getAllBlogs: publicProcedure.query(async () => {
+    return db.post.findMany();
+  }),
+
+  postBlog: publicProcedure
+    .input(z.object({ title: z.string(), description: z.string() }))
+    .mutation((req) => {
+      const postBlog = db.post.create({
+        data: {
+          title: req.input.title,
+          description: req.input.description,
+        },
+      });
+      return postBlog;
+    }),
 });
