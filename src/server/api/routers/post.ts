@@ -44,4 +44,16 @@ export const postRouter = createTRPCRouter({
       });
       return postBlog;
     }),
+
+  getDetailBlog: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .query((req) => {
+      return db.post.findUnique({ where: { id: req.input.id } });
+    }),
+
+  deleteBlog: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation((req) => {
+      return db.post.delete({ where: { id: req.input.id } });
+    }),
 });
