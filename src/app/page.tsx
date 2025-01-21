@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { clearConfigCache } from "prettier";
-
 import { LatestPost } from "~/app/_components/post";
 import { api, HydrateClient } from "~/trpc/server";
 
@@ -34,13 +33,21 @@ export default async function Home() {
             ))}
           </div>
 
-          <div className="flex flex-col items-center gap-2">
+          {/* <div className="flex flex-col items-center gap-2">
             <p className="text-2xl text-white">
               {hello ? hello.greeting : "Loading tRPC query..."}
             </p>
           </div>
+          <LatestPost /> */}
 
-          <LatestPost />
+          <div className="mt-12 text-center">
+            <Link
+              href={"/postBlog"}
+              className="rounded-md bg-[hsl(280,100%,70%)] px-6 py-2 font-medium"
+            >
+              POST
+            </Link>
+          </div>
         </div>
       </main>
     </HydrateClient>
